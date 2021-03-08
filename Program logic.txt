@@ -1,0 +1,18 @@
+Inifinite scroll Logic: 
+
+
+
+1) Fetch data from API 
+let response = await fetch(apiURL);
+
+let photoarray  = response 
+
+
+
+2) convert to .JSON
+
+3) listen for scroll on window object 
+to see if near bottom of page.
+
+
+4) Call get photos()

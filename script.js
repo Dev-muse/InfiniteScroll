@@ -1,14 +1,17 @@
-
+'use strict'
 
 // DOM elements & Objects
 
 const imageContainer = document.querySelector("#image-container");
 const loader = document.querySelector("#loader");
 
-//setting up variables for image loading
+
+//Initializing variables for image loading & Photo Array:
 let ready = false;
 let imagesLoaded = 0;
 let totalImages = 0;
+
+let isInitialLoad = true;
 
 let photosArray = [];
 
@@ -16,15 +19,22 @@ let photosArray = [];
 
 
 
-
 //SET UP API url with accessKey & Parameters to access Unsplash API 
 
+let initialCount = 5;
 let accessKey = '8Bgc0bVvot1E5FOjl-R9Onga6SXJzIIlTIJZO4r-hYw';
-let count =30;
-const apiUrl = `https://api.unsplash.com/photos/random/?client_id=${accessKey}&count=${count}`;
+let apiUrl = `https://api.unsplash.com/photos/random/?client_id=${accessKey}&count=${initialCount}`;
 
 
-//check if all images were loaded
+//Update API URL with new count
+
+function updateAPIURL(picCount){
+    apiUrl = `https://api.unsplash.com/photos/random?client_id=${apiKey}&count=${picCount}`;
+}
+
+
+
+//check if all images ARE loaded:
 
 function imgLoaded(){
     
@@ -32,7 +42,8 @@ function imgLoaded(){
    
     if(imagesLoaded == totalImages){
         ready = true;
-        loader.hidden=true;    
+        loader.hidden=true;  
+
     }
 };
 
@@ -51,7 +62,7 @@ function setAttributes(element, attributes){
 
 // ==================================================================================================
 
-// Create elements for LINKS & PHOTOS, ADD to DOM;
+// 2) Display PHOTOS Create elements for LINKS & PHOTOS, ADD to DOM;
 
 function displayPhotos(){
 
@@ -100,17 +111,23 @@ function displayPhotos(){
 // ==============================================================================================
 
 
-// GET photos from Unsplash API and Display on Page
+// 1) GET photos from Unsplash API and Display on Page
 
 async function getPhotos(){
     try{
+
+        //retrieve JSON data from API
         const response = await fetch(apiUrl);
         photosArray = await response.json();
+
         
         // call function to display photos 
-
         displayPhotos();
 
+        if(isInitialLoad){
+            updateAPIURL(30);
+            isInitialLoad = false;
+        };
 
 
     } catch(error){
@@ -123,10 +140,12 @@ async function getPhotos(){
 
 //Check to see scroll is near bottom of page, Load more photos if true;
 
-window.addEventListener("scroll",(e)=>{
+window.addEventListener("scroll",()=>{
 
  if(window.scrollY + window.innerHeight >= document.body.offsetHeight - 1000 && ready){
      getPhotos();
+
+     //reset ready back to false
      ready = false;
  }
 
